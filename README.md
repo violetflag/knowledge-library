@@ -7,3 +7,4 @@
     - **Calendar:** To view the calendar view directly in Obsidian.
     - **Kanban:** For managing project tasks visually.
 3.  **Links:** Use `[[ ]]` to create links between your notes and the dashboard.
+
