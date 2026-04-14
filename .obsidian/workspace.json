@@ -1,0 +1,203 @@
+{
+  "main": {
+    "id": "204fa44a06179a4c",
+    "type": "split",
+    "children": [
+      {
+        "id": "f14b30da63527a8c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "143a45324de7710e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01_DASHBOARD/Reports/2026-04-08_미국증시보고.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-04-08_미국증시보고"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9aeafb418b630d0b",
+    "type": "split",
+    "children": [
+      {
+        "id": "e51ac13ce00f709d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9b4701d556f658a5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "e08d5e035152f716",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "51e82d5adecbe4a0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "edf10d0fec990b0e",
+    "type": "split",
+    "children": [
+      {
+        "id": "459c2e92f049cd29",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "048231abf511ef57",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Templates/ProjectTemplate.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "ProjectTemplate 의 백링크"
+            }
+          },
+          {
+            "id": "1e1bf63e3efc9814",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Templates/ProjectTemplate.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "ProjectTemplate 의 나가는 링크"
+            }
+          },
+          {
+            "id": "46db8bed8da31b8e",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "390fb4a1e7fac83e",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "c519888ea118a6bb",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Templates/ProjectTemplate.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "ProjectTemplate 의 개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "templater-obsidian:Templater": false,
+      "obsidian-git:Open Git source control": false,
+      "obsidian-kanban:새 보드 만들기": false,
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "143a45324de7710e",
+  "lastOpenFiles": [
+    "01_DASHBOARD/Executive.md",
+    "사회/2026-04-09_커뮤니티이슈보고.md",
+    "README.md",
+    "경제/2026-04-10_미국증시보고.md",
+    "경제/2026-04-08_국내증시보고.md",
+    "01_DASHBOARD/Reports/2026-04-08_미국증시보고.md",
+    "02_PROJECTS/Projects/AI_Web_Service.md",
+    "00_SYSTEM/Templates/ProjectTemplate.md",
+    "Dashboard/Home.md",
+    "Dashboard/Executive_Dashboard.md",
+    "Templates/ProjectTemplate.md"
+  ]
+}

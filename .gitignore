@@ -1,0 +1,21 @@
+# Obsidian私人 설정
+.obsidian/workspaces.json
+.obsidian/plugins/
+.obsidian/themes/
+.obsidian/community-plugins.json
+.obsidian/appearance.json
+.obsidian/hotkeys.json
+.obsidian/openswitch.json
+
+# 캐시/임시 파일
+.cache/
+temp/
+*.tmp
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
+*.log
+
+# PDF (선택적)
+*.pdf
