@@ -3,419 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>지식도서관 대시보드</title>
+    <title>지식도서관 대시보드 v3</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style>
-        :root {
+        :root {{
             --primary: #3498db;
             --secondary: #2c3e50;
             --accent: #e74c3c;
             --bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --text-light: #666666;
+            --card-bg: #fff;
+            --text: #333;
+            --text-sm: #666;
             --border: #e0e0e0;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --radius: 12px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --radius: 10px;
+        }}
+        * {{ margin:0; padding:0; box-sizing:border-box; }}
+        body {{
+            font-family: 'Noto Sans KR', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        header {
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 12px;
+        }}
+        .container {{ max-width: 1200px; margin: 0 auto; }}
+        header {{
             text-align: center;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px 12px;
+            background: linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%);
             color: white;
             border-radius: var(--radius);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: var(--shadow);
-        }
+        }}
+        header h1 {{ font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 700; margin-bottom: 6px; }}
+        header p {{ font-size: clamp(0.8rem, 2.5vw, 0.95rem); opacity: 0.9; }}
 
-        header h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 700; margin-bottom: 10px; }
-        header p { opacity: 0.9; font-size: clamp(0.9rem, 2vw, 1.1rem); }
-
-        /* Grid Layout */
-        .dashboard {
+        .dashboard {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }}
 
-        /* Cards */
-        .card {
+        .card {{
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 25px;
+            padding: 16px;
             box-shadow: var(--shadow);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+            transition: transform 0.15s, box-shadow 0.15s;
+        }}
+        .card:hover {{ transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }}
 
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-
-        .card h2 {
-            font-size: clamp(1.1rem, 3vw, 1.4rem);
+        .card h2 {{
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
             color: var(--secondary);
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1.5px solid var(--primary);
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
+            gap: 6px;
+        }}
 
-        .card h2 .icon { font-size: 1.2em; }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .stats-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; }}
+        .stat-box {{
+            background: linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%);
             color: white;
-            padding: 20px;
-            border-radius: var(--radius);
+            padding: 12px 8px;
+            border-radius: 8px;
             text-align: center;
-        }
+        }}
+        .stat-box.primary {{ background: linear-gradient(135deg, #3498db, #2980b9); }}
+        .stat-box.success {{ background: linear-gradient(135deg, #27ae60, #229954); }}
+        .stat-number {{ font-size: clamp(1.2rem, 4vw, 1.6rem); font-weight: 700; display: block; }}
+        .stat-label {{ font-size: 0.75rem; opacity: 0.9; margin-top: 4px; }}
 
-        .stat-box.primary { background: linear-gradient(135deg, #3498db, #2980b9); }
-        .stat-box.success { background: linear-gradient(135deg, #27ae60, #229954); }
-        .stat-box.accent { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .topic-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }}
+        .topic-card {{
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }}
+        .topic-card:hover {{
+            border-color: var(--primary);
+            transform: scale(1.02);
+            box-shadow: var(--shadow);
+        }}
+        .topic-card.경제 {{ border-left: 3px solid #f39c12; }}
+        .topic-card.건강 {{ border-left:  solid #27ae60; }}
+        .topic-card.마인드 {{ border-left: 3px solid #9b59b6; }}
+        .topic-card.독서 {{ border-left: 3px solid #e67e22; }}
+        .topic-card.자녀교육 {{ border-left: 3px solid #1abc9c; }}
+        .topic-card.한국역사 {{ border-left: 3px solid #c0392b; }}
+        .topic-card.세계사 {{ border-left: 3px solid #34495e; }}
+        .topic-count {{ font-size: 1.3rem; font-weight: 700; color: var(--primary); }}
+        .topic-name {{ font-size: 0.85rem; color: var(--text-sm); margin-top: 4px; }}
 
-        .stat-number { font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 700; display: block; }
-        .stat-label { font-size: 0.85rem; opacity: 0.9; margin-top: 5px; }
+        .topic-detail {{
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }}
+        .topic-detail.active {{ display: block; animation: fadeIn 0.3s; }}
 
-        /* Topic Cards */
-        .topic-card {
-            border-left: 4px solid var(--primary);
-        }
-
-        .topic-card.경제 { border-left-color: #f39c12; }
-        .topic-card.건강 { border-left-color: #27ae60; }
-        .topic-card.마인드 { border-left-color: #9b59b6; }
-        .topic-card.독서 { border-left-color: #e67e22; }
-        .topic-card.자녀교육 { border-left-color: #1abc9c; }
-        .topic-card.한국역사 { border-left-color: #c0392b; }
-        .topic-card.세계사 { border-left-color: #34495e; }
-
-        .topic-count {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .topic-list { list-style: none; margin-top: 10px; }
-        .topic-list li {
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .topic-list li:last-child { border-bottom: none; }
-        .topic-list a {
-            color: var(--text);
-            text-decoration: none;
+        .file-list {{ list-style: none; }}
+        .file-list li {{
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
             font-size: 0.9rem;
-        }
-        .topic-list a:hover { color: var(--primary); }
+        }}
+        .file-list li:last-child {{ border-bottom: none; }}
+        .file-list a {{ color: var(--text); text-decoration: none; }}
+        .file-list a:hover {{ color: var(--primary); }}
 
-        /* File List */
-        .file-item {
+        .recent-item {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+            padding: 8px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed var(--border);
+        }}
+        .recent-item:last-child {{ border-bottom: none; }}
+        .recent-item a {{ color: var(--text); text-decoration: none; }}
+        .recent-item a:hover {{ color: var(--primary); }}
+        .recent-date {{ color: var(--text-sm); font-size: 0.8rem; white-space: nowrap; }}
 
-        .file-item:last-child { border-bottom: none; }
-
-        .file-name {
-            flex: 1;
-            min-width: 200px;
-            font-weight: 500;
-        }
-
-        .file-name a {
-            color: var(--text);
-            text-decoration: none;
-        }
-        .file-name a:hover { color: var(--primary); }
-
-        .file-date {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            white-space: nowrap;
-        }
-
-        /* D-Day */
-        .dday-box {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        .dday-box {{
+            background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 50%, #2BFF88 100%);
             color: white;
-            padding: 20px;
+            padding: 16px;
             border-radius: var(--radius);
             text-align: center;
-        }
-
-        .dday-number {
-            font-size: clamp(2rem, 6vw, 3.5rem);
+        }}
+        .dday-number {{
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
             font-weight: 700;
-            display: block;
-            margin: 10px 0;
-        }
+            margin: 8px 0;
+        }}
 
-        /* Chart Container */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-top: 20px;
-        }
+        #graph-container {{
+            width: 100%;
+            height: 500px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: #fafafa;
+        }}
 
-        /* Footer */
-        footer {
+        footer {{
             text-align: center;
-            padding: 30px;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border);
-            margin-top: 40px;
-        }
-
-        footer a { color: var(--primary); text-decoration: none; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .dashboard { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .file-item { flex-direction: column; align-items: flex-start; }
-        }
-
-        /* Badge */
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            background: var(--primary);
-            color: white;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin-left: 8px;
-        }
-
-        /* Insight Section */
-        .insight-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .insight-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 3px solid var(--secondary);
-        }
-
-        .insight-card h4 {
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-            color: var(--secondary);
-        }
-
-        .insight-card p {
+            padding: 20px;
+            color: var(--text-sm);
             font-size: 0.85rem;
-            color: var(--text-light);
-            line-height: 1.5;
-        }
+            border-top: 1px solid var(--border);
+            margin-top: 30px;
+        }}
+
+        @keyframes fadeIn {{
+            from {{ opacity: 0; transform: translateY(-10px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+
+        @media (max-width: 600px) {{
+            body {{ padding: 8px; font-size: 13px; }}
+            .dashboard {{ grid-template-columns: 1fr; }}
+            .stats-grid {{ grid-template-columns: repeat(2, 1fr); }}
+            .topic-grid {{ grid-template-columns: repeat(2, 1fr); }}
+            #graph-container {{ height: 400px; }}
+        }}
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📚 지식도서관 대시보드</h1>
-            <p>Knowledge Library Dashboard | 총 5개 문서 | 생성: 2026-04-14 15:51:04</p>
+            <h1>📚 지식도서관</h1>
+            <p>총 5개 문서 · v3 인터랙티브</p>
         </header>
 
         <div class="dashboard">
 
             <!-- 전체 통계 카드 -->
-            <div class="card" style="grid-column: span 2;">
-                <h2><span class="icon">📊</span> 전체 현황</h2>
+            <div class="card">
+                <h2>📊 현황</h2>
                 <div class="stats-grid">
-                    <div class="stat-box primary">
-                        <span class="stat-number">5</span>
-                        <div class="stat-label">총 문서 수</div>
-                    </div>
-                    <div class="stat-box success">
-                        <span class="stat-number">7</span>
-                        <div class="stat-label">주제 분야</div>
-                    </div>
-                    <div class="stat-box accent">
-                        <span class="stat-number">5</span>
-                        <div class="stat-label">최근 30일 추가</div>
-                    </div>
+                    <div class="stat-box primary"><span class="stat-number">5</span><div class="stat-label">총 문서</div></div>
+                    <div class="stat-box success"><span class="stat-number">1</span><div class="stat-label">주제</div></div>
+                    <div class="stat-box accent"><span class="stat-number">5</span><div class="stat-label">30일 추가</div></div>
                 </div>
-                <div class="chart-container">
+                <div style="height: 200px; margin-top: 12px;">
                     <canvas id="monthlyChart"></canvas>
                 </div>
             </div>
 
             <!-- D-Day 카드 -->
             <div class="card">
-                <h2><span class="icon">⏳</span> D-Day</h2>
+                <h2>⏳ D-Day</h2>
                 <div class="dday-box">
-                    <div>200세까지 남은 시간</div>
+                    <div>200세까지</div>
                     <span class="dday-number">N/A</span>
-                    <div style="font-size: 0.9rem; opacity: 0.9;"></div>
+                    <div style="font-size: 0.8rem; opacity: 0.9;"></div>
                 </div>
             </div>
 
-            <!-- 주제별 문서 수 -->
+            <!-- 주제별 분포 -->
             <div class="card">
-                <h2><span class="icon">📁</span> 주제별 분포</h2>
-                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="stat-box"><span class="stat-number">2</span><div class="stat-label">건강</div></div><div class="stat-box"><span class="stat-number">1</span><div class="stat-label">경제</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">마인드</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">독서</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">자녀교육</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">한국역사</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">세계사</div></div>
+                <h2>📁 주제별 분포</h2>
+                <div class="topic-grid" id="topicGrid"></div>
+                <div id="topicDetail" class="topic-detail">
+                    <h3 id="topicTitle"></h3>
+                    <ul class="file-list" id="topicFiles"></ul>
                 </div>
             </div>
 
-            <!-- 주제별 최신 통찰 -->
+            <!-- 최근 업데이트 -->
+            <div class="card">
+                <h2>🕐 최근 (7일)</h2>
+                <div class="recent-item"><a href="https://violetflag.github.io/knowledge-library/README" target="_blank">README.md</a><span class="recent-date">04-14 15:31</span></div>
+<div class="recent-item"><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/%EC%98%A4%EB%8A%98%EC%9D%98_%ED%85%8C%EC%8A%AC%EB%9D%BC_%EB%89%B4%EC%8A%A4_%EC%9B%94%EA%B0%80%EA%B0%80_%EB%A1%9C%EB%B3%B4%ED%83%9D%EC%8B%9C_%EC%A7%81%EC%A0%91_%EC%B2%B4%ED%97%98%ED%95%9C_%ED%9B%84_%EB%82%B4%EB%A6%B0_%EA%B2%B0%EB%A1%A0_352_%ED%85%8C%EC%8A%AC%EB%9D%BC_%EC%96%B4%EB%8B%9D_D_9_%EC%98%88%EC%83%81%EC%9D%80" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a><span class="recent-date">04-14 14:28</span></div>
+<div class="recent-item"><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/%EB%8B%A5%ED%84%B0%EC%93%B0%EB%A6%AC_%ED%95%9C%EB%AF%B8%EC%9D%BC%EC%9D%98%EC%82%AC%EC%9D%98_%EC%89%AC%EC%9A%B4_%EC%9D%98%ED%95%99_%EC%B6%A9%EA%B2%A9_%EC%A3%BC%EC%9D%98_%EC%86%8C%EA%B8%88%EC%9D%98_%EC%A7%84%EC%8B%A4_%EC%8B%A0%EC%9E%A5_%EC%8B%AC%EC%9E%A5_%EB%A7%9D%EA%B0%80%EB%9C%A8%EB%A6%B0%EB%8B%A4_%EC%9A%B0%EC%A3%BC%EB%A7%98_10%EB%B6%80" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a><span class="recent-date">04-14 14:24</span></div>
+<div class="recent-item"><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/%EB%8B%A5%ED%84%B0%EC%93%B0%EB%A6%AC_%EB%8C%80%EC%9E%A5%EC%86%8D_%EB%B6%80%ED%8C%A8%EC%99%80_%EC%82%B0%EC%84%B1%ED%99%94%EB%A5%BC_%EB%A7%89%EC%95%84%EB%9D%BC" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a><span class="recent-date">04-14 14:05</span></div>
+<div class="recent-item"><a href="https://violetflag.github.io/knowledge-library/01_DASHBOARD/Executive" target="_blank">Executive.md</a><span class="recent-date">04-08 02:36</span></div>
+
+            </div>
+
+            <!-- 그래프뷰 -->
             <div class="card" style="grid-column: span 2;">
-                <h2><span class="icon">💡</span> 주제별 최신 통찰</h2>
-                <div class="insight-grid">
-                    
-                    <div class="insight-card">
-                        <h4>경제</h4>
-                        <p>📄 <a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a></p>
-                    </div>
-                    
-                    <div class="insight-card">
-                        <h4>건강</h4>
-                        <p>📄 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a></p><p>📄 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></p>
-                    </div>
-                    
-                </div>
-            </div>
-
-            <!-- 최근 업데이트 (7일) -->
-            <div class="card" style="grid-column: span 2;">
-                <h2><span class="icon">🕐</span> 최근 업데이트 (7일)</h2>
-                <div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/README" target="_blank">README.md</a></span><span class="file-date">04-14 15:31</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a></span><span class="file-date">04-14 14:28</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a></span><span class="file-date">04-14 14:24</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></span><span class="file-date">04-14 14:05</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/01_DASHBOARD/Executive" target="_blank">Executive.md</a></span><span class="file-date">04-08 02:36</span></div>
-            </div>
-
-            <!-- 최근 30일 추가 -->
-            <div class="card">
-                <h2><span class="icon">📈</span> 이달의 성장</h2>
-                <p style="margin-bottom: 15px; color: var(--text-light);">
-                    최근 30일 동안 <strong style="color: var(--accent); font-size: 1.5em;">5</strong>개의 새 지식이 추가되었습니다.
-                </p>
-                <div class="chart-container" style="height: 200px;">
-                    <canvas id="growthChart"></canvas>
-                </div>
-            </div>
-
-            <!-- 저장소 정보 -->
-            <div class="card">
-                <h2><span class="icon">🔗</span> 연결</h2>
-                <p style="margin-bottom: 10px;">GitHub 저장소:</p>
-                <a href="https://github.com/violetflag/knowledge-library" target="_blank" style="color: var(--primary);">github.com/violetflag/knowledge-library</a>
-                <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--border);">
-                <p style="font-size: 0.9rem; color: var(--text-light);">
-                    Obsidian Vault 기반<br>
-                    자동 기록 + Gemini AI 요약<br>
-                    위키 링크로 연결된 지식 네트워크
+                <h2>🌐 지식 그래프 (클릭하여 이동)</h2>
+                <div id="graph-container"></div>
+                <p style="font-size: 0.85rem; color: var(--text-sm); margin-top: 8px;">
+                    마우스 드래그로 이동, 스크롤로 확대/축소, 노드 클릭 → 파일 열기
                 </p>
             </div>
         </div>
 
         <footer>
-            <p>지식도서관(KL) v2.0 | 현대적인 웹 대시보드 | 2026-04-14 15:51:04</p>
-            <p><a href="https://github.com/violetflag/knowledge-library" target="_blank">GitHub 저장소 보기</a></p>
+            <p>지식도서관 v3 · 모바일 최적화 · 그래프뷰 통합 · <a href="https://github.com/violetflag/knowledge-library" target="_blank">GitHub</a></p>
         </footer>
     </div>
 
     <script>
-        // Chart.js 차트 설정
-        const ctx_monthly = document.getElementById('monthlyChart').getContext('2d');
-        new Chart(ctx_monthly, {
+        // === 데이터 ===
+        const graphData = {"nodes": [{"id": "README.md", "label": "README", "title": "README", "group": "기타"}, {"id": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "label": "닥터쓰리_한미일의사의_쉬운_의학_충격", "title": "닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부", "group": "기타"}, {"id": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "label": "닥터쓰리_대장속_부패와_산성화를_막아", "title": "닥터쓰리_대장속_부패와_산성화를_막아라", "group": "기타"}, {"id": "01_DASHBOARD/Executive.md", "label": "Executive", "title": "Executive", "group": "기타"}, {"id": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "label": "오늘의_테슬라_뉴스_월가가_로보택시_", "title": "오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은", "group": "기타"}], "edges": [{"from": "README.md", "to": " "}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "소금"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "신장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "심장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "소금"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "신장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "심장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "나트륨"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "저염"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "무염"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "키토제닉다이어트"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "LCHF"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "저탄고지"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "카니보어"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "이유식"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "유아식"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "우주맘"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "소금"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "신장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "심장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "소금"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "나트륨"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "신장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "심장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "저염"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "무염"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "식단"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "우주맘"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "키토제닉다이어트"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "소금"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "신장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "심장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "우주맘"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "소금"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "심장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "소금"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "신장"}, {"from": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "to": "나트륨"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "저잔사식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장산성화"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장내미생물"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "크론병"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "궤양성대장염"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "치질"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "치열"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "렌틸콩"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "현미"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "귀리"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "박테로이드"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "프로티오박테리아"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "옥살산"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "동물성식단"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "채식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장질환"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "저잔사식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식단"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장내벽"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "치질"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "치裂"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "산성화"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "렌틸콩"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "귀지"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "현미"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식물"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "젖산"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "유기산"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "산성"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "세포"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "부식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "염증"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "미생물"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "생태계"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "파괴"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "산성"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "유익균"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "박테로이드"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "유해균"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "프로티오박테리아"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장내세균총"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "손상"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "고기"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식물"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "고기"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "소장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "저항성전분"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식물성음식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "콩"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "현미"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "통곡물"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "생채소"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "과일"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장질환"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "저잔사식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "휴식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "점막"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "음식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "소장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "계란"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "생선"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "고기"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "버터"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "동물성식단"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "음식"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "콩류"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "통곡물"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "현미"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "귀지"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "생채"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "과일"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "콩"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "옥살산"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "크론병"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "궤양성대장염"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "포뮬러"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "육류"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "무섬유질식단"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "소화기질환"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "섬유질"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장질환"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "대장"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식물성"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식단"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "유튜브"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "Gemini AI"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "장질환"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "식이섬유 18부"}, {"from": "02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md", "to": "닥터쓰리 - 한미일의사의 쉬운 의학"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "로보택시"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "어닝"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "ARK"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "모델3"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "elonmusk"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "로봇"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라뉴스"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "Tesla"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "오테뉴"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "모델y"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "오늘의테슬라뉴스"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "주가"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "투자"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "주식"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "모델Y"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "investing"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "자율주행"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "FSD"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "TSLA"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "일론머스크"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "주식투자"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "Twitter"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "월가"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "옵티머스"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라주식"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "해외주식"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "어닝"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "스페이스X"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "로보택시"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "트위터"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "로보택시"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "어닝"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "월가"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "주가"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "월가"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "로보택시"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "자율주행"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "테슬라"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "어닝"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "어닝"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "자율주행"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "로보택시"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "FSD"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "투자"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "주가"}, {"from": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "to": "오늘의 테슬라 뉴스"}]};
+        const container = document.getElementById('graph-container');
+        const options = {{
+            nodes: {{
+                shape: 'dot',
+                size: 20,
+                font: {{ size: 12 }},
+                borderWidth: 2,
+                shadow: true
+            }},
+            edges: {{
+                width: 1,
+                color: {{ color: '#bbb' }},
+                smooth: {{ type: 'continuous' }}
+            }},
+            physics: {{
+                stabilization: true,
+                barnesHut: {{ gravitationalConstant: -2000, springConstant: 0.04, springLength: 95 }}
+            }},
+            interaction: {{ hover: true, tooltipDelay: 200 }}
+        }};
+        const network = new vis.Network(container, {{ nodes: new vis.DataSet(graphData.nodes), edges: new vis.DataSet(graphData.edges) }}, options);
+
+        // 노드 클릭 → 파일 열기
+        network.on('click', function (params) {{
+            if (params.nodes.length > 0) {{
+                const nodeId = params.nodes[0];
+                const node = graphData.nodes.find(n => n.id === nodeId);
+                if (node) {{
+                    const url = 'https://violetflag.github.io/knowledge-library/' + encodeURIComponent(node.id.replace('.md', ''));
+                    window.open(url, '_blank');
+                }}
+            }}
+        }});
+
+        // 월별 차트
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(ctx, {{
             type: 'bar',
-            data: {
-                labels: ['2026-04'],
-                datasets: [{
-                    label: '월별 문서 수',
+            data: {{
+                labels: ["2026-04"],
+                datasets: [{{
+                    label: '월별 문서',
                     data: [5],
                     backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                    borderColor: 'rgba(52, 152, 219, 1)',
-                    borderWidth: 1,
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: true, text: '월별 지식 증가 추이 (최근 12개월)' }
-                },
-                scales: {
-                    y: { beginAtZero: true, ticks: { precision: 0 } }
-                }
-            }
-        });
+                    borderRadius: 4
+                }}]
+            }},
+            options: {{ responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }} }}
+        }});
 
-        // D-Day 카운트다운 (실시간)
-        function updateDday() {
-            const targetDate = new Date('2189-09-12');  // 200세 목표
+        // D-Day 업데이트
+        function updateDday() {{
+            const target = new Date('2189-09-12');
             const now = new Date();
-            const diff = Math.floor((targetDate - now) / (1000 * 60 * 60 * 24));
-            document.querySelectorAll('.dday-number').forEach(el => {
-                el.textContent = diff.toLocaleString() + ' 일';
-            });
-        }
+            const diff = Math.floor((target - now) / (1000 * 60 * 60 * 24));
+            document.querySelectorAll('.dday-number').forEach(el => el.textContent = diff.toLocaleString() + ' 일');
+        }}
         updateDday();
-        setInterval(updateDday, 1000 * 60 * 60); // 1시간마다 업데이트
+        setInterval(updateDday, 3600000);
 
-        // 성장 차트
-        const ctx_growth = document.getElementById('growthChart').getContext('2d');
-        new Chart(ctx_growth, {
-            type: 'doughnut',
-            data: {
-                labels: ['최근 30일 추가', '기존 문서'],
-                datasets: [{
-                    data: [5, 0],
-                    backgroundColor: ['#3498db', '#ecf0f1'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
+        // 주제별 필터링
+        const topicData = {"기타": [{"name": "README.md", "path": "README.md", "mtime": "2026-04-14 15:31"}, {"name": "오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "path": "01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md", "mtime": "2026-04-14 14:28"}, {"name": "닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "path": "02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md", "mtime": "2026-04-14 14:24"}]};
+        const topicCounts = {"\uae30\ud0c0": 5};
+        const topicGrid = document.getElementById('topicGrid');
+        const topicDetail = document.getElementById('topicDetail');
+
+        Object.keys(topicData).forEach(topic => {{
+            const count = topicCounts[topic] || 0;
+            const card = document.createElement('div');
+            card.className = 'topic-card ' + topic;
+            card.innerHTML = `<div class="topic-count">${{count}}</div><div class="topic-name">${{topic}}</div>`;
+            card.onclick = () => {{
+                document.querySelectorAll('.topic-card').forEach(c => c.style.borderColor = '');
+                card.style.borderColor = 'var(--primary)';
+                showTopicFiles(topic);
+            }};
+            topicGrid.appendChild(card);
+        }});
+
+        function showTopicFiles(topic) {{
+            const files = topicData[topic];
+            const list = document.getElementById('topicFiles');
+            list.innerHTML = files.map(f => `<li><a href="${{makeLink(f.path)}}" target="_blank">${{f.name}}</a></li>`).join('');
+            document.getElementById('topicDetail').classList.add('active');
+        }}
+
+        function makeLink(path) {{
+            return 'https://violetflag.github.io/knowledge-library/' + encodeURIComponent(path.replace('.md', ''));
+        }}
     </script>
 </body>
 </html>
