@@ -4,108 +4,418 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>지식도서관 대시보드</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; margin: 40px; line-height: 1.6; color: #333; }
-        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
-        h2 { color: #34495e; margin-top: 30px; border-left: 4px solid #3498db; padding-left: 15px; }
-        h3 { color: #2c3e50; margin-top: 20px; }
-        .stats-table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-        .stats-table th, .stats-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        .stats-table th { background-color: #3498db; color: white; }
-        .stats-table tr:nth-child(even) { background-color: #f2f2f2; }
-        .link-item { margin: 8px 0; padding: 8px; background: #ecf0f1; border-radius: 4px; }
-        .link-item a { text-decoration: none; color: #2980b9; }
-        .link-item a:hover { color: #1a5276; text-decoration: underline; }
-        .topic-section { margin: 25px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
-        .dday-item { margin: 6px 0; }
-        .footer { margin-top: 40px; color: #7f8c8d; font-size: 0.9em; text-align: center; }
-        .code { background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; }
-        .section { margin-bottom: 30px; }
-        .insight-box { background: #e8f4f8; padding: 12px; margin: 10px 0; border-left: 3px solid #3498db; }
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 700; margin-bottom: 10px; }
+        header p { opacity: 0.9; font-size: clamp(0.9rem, 2vw, 1.1rem); }
+
+        /* Grid Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: var(--secondary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card h2 .icon { font-size: 1.2em; }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .stat-box.primary { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .stat-box.success { background: linear-gradient(135deg, #27ae60, #229954); }
+        .stat-box.accent { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+        .stat-number { font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 700; display: block; }
+        .stat-label { font-size: 0.85rem; opacity: 0.9; margin-top: 5px; }
+
+        /* Topic Cards */
+        .topic-card {
+            border-left: 4px solid var(--primary);
+        }
+
+        .topic-card.경제 { border-left-color: #f39c12; }
+        .topic-card.건강 { border-left-color: #27ae60; }
+        .topic-card.마인드 { border-left-color: #9b59b6; }
+        .topic-card.독서 { border-left-color: #e67e22; }
+        .topic-card.자녀교육 { border-left-color: #1abc9c; }
+        .topic-card.한국역사 { border-left-color: #c0392b; }
+        .topic-card.세계사 { border-left-color: #34495e; }
+
+        .topic-count {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .topic-list { list-style: none; margin-top: 10px; }
+        .topic-list li {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .topic-list li:last-child { border-bottom: none; }
+        .topic-list a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .topic-list a:hover { color: var(--primary); }
+
+        /* File List */
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .file-item:last-child { border-bottom: none; }
+
+        .file-name {
+            flex: 1;
+            min-width: 200px;
+            font-weight: 500;
+        }
+
+        .file-name a {
+            color: var(--text);
+            text-decoration: none;
+        }
+        .file-name a:hover { color: var(--primary); }
+
+        .file-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        /* D-Day */
+        .dday-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .dday-number {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 700;
+            display: block;
+            margin: 10px 0;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        footer a { color: var(--primary); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .dashboard { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .file-item { flex-direction: column; align-items: flex-start; }
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+        /* Insight Section */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .insight-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--secondary);
+        }
+
+        .insight-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
+
+        .insight-card p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
-    <h1>📚 지식도서관 대시보드</h1>
-    <p><em>생성 시각: 2026-04-14 15:37</em></p>
+    <div class="container">
+        <header>
+            <h1>📚 지식도서관 대시보드</h1>
+            <p>Knowledge Library Dashboard | 총 5개 문서 | 생성: 2026-04-14 15:51:04</p>
+        </header>
 
-    <!-- 통계 -->
-    <div class="section">
-        <h2>📊 통계</h2>
-        <table class="stats-table">
-            <tr><th>주제</th><th>기록 수</th><th>최신 통찰</th></tr>
-            <tr><td>경제</td><td>2</td><td><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a><br><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/2026-04-14_나스닥_장기_투자_전략" target="_blank">2026-04-14_나스닥_장기_투자_전략.md</a></td></tr>
-            <tr><td>건강</td><td>2</td><td><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a><br><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></td></tr>
-            <tr><td>마인드</td><td>0</td><td>없음</td></tr>
-            <tr><td>독서</td><td>0</td><td>없음</td></tr>
-            <tr><td>자녀교육</td><td>0</td><td>없음</td></tr>
-            <tr><td>한국역사</td><td>0</td><td>없음</td></tr>
-            <tr><td>세계사</td><td>0</td><td>없음</td></tr>
+        <div class="dashboard">
 
-        </table>
-    </div>
+            <!-- 전체 통계 카드 -->
+            <div class="card" style="grid-column: span 2;">
+                <h2><span class="icon">📊</span> 전체 현황</h2>
+                <div class="stats-grid">
+                    <div class="stat-box primary">
+                        <span class="stat-number">5</span>
+                        <div class="stat-label">총 문서 수</div>
+                    </div>
+                    <div class="stat-box success">
+                        <span class="stat-number">7</span>
+                        <div class="stat-label">주제 분야</div>
+                    </div>
+                    <div class="stat-box accent">
+                        <span class="stat-number">5</span>
+                        <div class="stat-label">최근 30일 추가</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
 
-    <!-- 주제별 최신 통찰 -->
-    <div class="section">
-        <h2>💡 주제별 최신 통찰</h2>
-    <div class="topic-section">
-        <h3>경제</h3>
-        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a></div>
-        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/2026-04-14_나스닥_장기_투자_전략" target="_blank">2026-04-14_나스닥_장기_투자_전략.md</a></div>
-    </div>
-    <div class="topic-section">
-        <h3>건강</h3>
-        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a></div>
-        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></div>
-    </div>
+            <!-- D-Day 카드 -->
+            <div class="card">
+                <h2><span class="icon">⏳</span> D-Day</h2>
+                <div class="dday-box">
+                    <div>200세까지 남은 시간</div>
+                    <span class="dday-number">N/A</span>
+                    <div style="font-size: 0.9rem; opacity: 0.9;"></div>
+                </div>
+            </div>
 
-    </div>
+            <!-- 주제별 문서 수 -->
+            <div class="card">
+                <h2><span class="icon">📁</span> 주제별 분포</h2>
+                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="stat-box"><span class="stat-number">2</span><div class="stat-label">건강</div></div><div class="stat-box"><span class="stat-number">1</span><div class="stat-label">경제</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">마인드</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">독서</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">자녀교육</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">한국역사</div></div><div class="stat-box"><span class="stat-number">0</span><div class="stat-label">세계사</div></div>
+                </div>
+            </div>
 
-    <!-- 최근 업데이트 (7일) -->
-    <div class="section">
-        <h2>📅 최근 업데이트 (7일)</h2>
-        <div class="link-item"><strong>README.md</strong><br>📂 README.md (04-14 15:31)<br><a href="https://violetflag.github.io/knowledge-library/README" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</strong><br>📂 01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md (04-14 14:28)<br><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</strong><br>📂 02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md (04-14 14:24)<br><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>닥터쓰리_대장속_부패와_산성화를_막아라.md</strong><br>📂 02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md (04-14 14:05)<br><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>2026-04-14_나스닥_장기_투자_전략.md</strong><br>📂 01_ECONOMY/2026-04-14_나스닥_장기_투자_전략.md (04-14 10:42)<br><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/2026-04-14_나스닥_장기_투자_전략" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>2026-04-10_미국증시보고.md</strong><br>📂 경제/2026-04-10_미국증시보고.md (04-10 08:56)<br><a href="https://violetflag.github.io/knowledge-library/경제/2026-04-10_미국증시보고" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>2026-04-09_커뮤니티이슈보고.md</strong><br>📂 사회/2026-04-09_커뮤니티이슈보고.md (04-09 11:27)<br><a href="https://violetflag.github.io/knowledge-library/사회/2026-04-09_커뮤니티이슈보고" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>2026-04-08_국내증시보고.md</strong><br>📂 경제/2026-04-08_국내증시보고.md (04-08 09:24)<br><a href="https://violetflag.github.io/knowledge-library/경제/2026-04-08_국내증시보고" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>2026-04-08_미국증시보고.md</strong><br>📂 경제/2026-04-08_미국증시보고.md (04-08 08:11)<br><a href="https://violetflag.github.io/knowledge-library/경제/2026-04-08_미국증시보고" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>2026-04-08_미국증시보고.md</strong><br>📂 01_DASHBOARD/Reports/2026-04-08_미국증시보고.md (04-08 08:05)<br><a href="https://violetflag.github.io/knowledge-library/01_DASHBOARD/Reports/2026-04-08_미국증시보고" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>Executive.md</strong><br>📂 01_DASHBOARD/Executive.md (04-08 02:36)<br><a href="https://violetflag.github.io/knowledge-library/01_DASHBOARD/Executive" target="_blank">🔗 열기</a></div>
-        <div class="link-item"><strong>AI_Web_Service.md</strong><br>📂 02_PROJECTS/Projects/AI_Web_Service.md (04-08 02:35)<br><a href="https://violetflag.github.io/knowledge-library/02_PROJECTS/Projects/AI_Web_Service" target="_blank">🔗 열기</a></div>
+            <!-- 주제별 최신 통찰 -->
+            <div class="card" style="grid-column: span 2;">
+                <h2><span class="icon">💡</span> 주제별 최신 통찰</h2>
+                <div class="insight-grid">
+                    
+                    <div class="insight-card">
+                        <h4>경제</h4>
+                        <p>📄 <a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a></p>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <h4>건강</h4>
+                        <p>📄 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a></p><p>📄 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></p>
+                    </div>
+                    
+                </div>
+            </div>
 
-    </div>
+            <!-- 최근 업데이트 (7일) -->
+            <div class="card" style="grid-column: span 2;">
+                <h2><span class="icon">🕐</span> 최근 업데이트 (7일)</h2>
+                <div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/README" target="_blank">README.md</a></span><span class="file-date">04-14 15:31</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a></span><span class="file-date">04-14 14:28</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a></span><span class="file-date">04-14 14:24</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></span><span class="file-date">04-14 14:05</span></div><div class="file-item"><span class="file-name"><a href="https://violetflag.github.io/knowledge-library/01_DASHBOARD/Executive" target="_blank">Executive.md</a></span><span class="file-date">04-08 02:36</span></div>
+            </div>
 
-    <!-- D-Days -->
-    <div class="section">
-        <h2>⏳ D-Day 카운트다운</h2>
-        <div class="code">
-            <div class="dday-item"># D-Day</div>
-            <div class="dday-item">200살까지 남은 시간: **59685일**</div>
-            <div class="dday-item">- 기준일: 1989-09-12</div>
-            <div class="dday-item">- 200세 달성일: 2189-09-12</div>
-            <div class="dday-item">- 현재까지 생존일: 13140일 (약 36년)</div>
-            <div class="dday-item">- 남은 years: 164년</div>
-            <div class="dday-item">```dataviewjs</div>
-            <div class="dday-item">const birthday = dv.expando("1989-09-12");</div>
-            <div class="dday-item">const expectancy = 200;</div>
-            <div class="dday-item">const target = new Date(birthday);</div>
-            <div class="dday-item">target.setFullYear(target.getFullYear() + expectancy);</div>
-            <div class="dday-item">const now = new Date();</div>
-            <div class="dday-item">const diff = Math.floor((target - now) / (1000 * 60 * 60 * 24));</div>
-            <div class="dday-item">dv.paragraph("**" + diff + "일** 남음 (200세까지)");</div>
-            <div class="dday-item">```</div>
-            <div class="dday-item">*마지막 업데이트: 2026-04-14 10:42*</div>
+            <!-- 최근 30일 추가 -->
+            <div class="card">
+                <h2><span class="icon">📈</span> 이달의 성장</h2>
+                <p style="margin-bottom: 15px; color: var(--text-light);">
+                    최근 30일 동안 <strong style="color: var(--accent); font-size: 1.5em;">5</strong>개의 새 지식이 추가되었습니다.
+                </p>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
 
+            <!-- 저장소 정보 -->
+            <div class="card">
+                <h2><span class="icon">🔗</span> 연결</h2>
+                <p style="margin-bottom: 10px;">GitHub 저장소:</p>
+                <a href="https://github.com/violetflag/knowledge-library" target="_blank" style="color: var(--primary);">github.com/violetflag/knowledge-library</a>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--border);">
+                <p style="font-size: 0.9rem; color: var(--text-light);">
+                    Obsidian Vault 기반<br>
+                    자동 기록 + Gemini AI 요약<br>
+                    위키 링크로 연결된 지식 네트워크
+                </p>
+            </div>
         </div>
+
+        <footer>
+            <p>지식도서관(KL) v2.0 | 현대적인 웹 대시보드 | 2026-04-14 15:51:04</p>
+            <p><a href="https://github.com/violetflag/knowledge-library" target="_blank">GitHub 저장소 보기</a></p>
+        </footer>
     </div>
 
-    <div class="footer">
-        <p>이 대시보드는 지식도서관(Knowledge Library)에서 자동 생성됩니다.</p>
-        <p>Obsidian 기반 | 7개 주제 | GitHub Pages 호스팅</p>
-        <p><a href="https://github.com/violetflag/knowledge-library" target="_blank">GitHub 저장소</a></p>
-    </div>
+    <script>
+        // Chart.js 차트 설정
+        const ctx_monthly = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(ctx_monthly, {
+            type: 'bar',
+            data: {
+                labels: ['2026-04'],
+                datasets: [{
+                    label: '월별 문서 수',
+                    data: [5],
+                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: '월별 지식 증가 추이 (최근 12개월)' }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
+                }
+            }
+        });
+
+        // D-Day 카운트다운 (실시간)
+        function updateDday() {
+            const targetDate = new Date('2189-09-12');  // 200세 목표
+            const now = new Date();
+            const diff = Math.floor((targetDate - now) / (1000 * 60 * 60 * 24));
+            document.querySelectorAll('.dday-number').forEach(el => {
+                el.textContent = diff.toLocaleString() + ' 일';
+            });
+        }
+        updateDday();
+        setInterval(updateDday, 1000 * 60 * 60); // 1시간마다 업데이트
+
+        // 성장 차트
+        const ctx_growth = document.getElementById('growthChart').getContext('2d');
+        new Chart(ctx_growth, {
+            type: 'doughnut',
+            data: {
+                labels: ['최근 30일 추가', '기존 문서'],
+                datasets: [{
+                    data: [5, 0],
+                    backgroundColor: ['#3498db', '#ecf0f1'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
