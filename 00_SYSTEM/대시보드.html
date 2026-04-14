@@ -5,59 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>지식도서관 대시보드</title>
     <style>
-        body { font-family: 'Malgun Gothic', '맑은 고딕', 'NanumGothic', sans-serif; margin: 40px; line-height: 1.6; color: #333; }
+        body { font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; margin: 40px; line-height: 1.6; color: #333; }
         h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
         h2 { color: #34495e; margin-top: 30px; border-left: 4px solid #3498db; padding-left: 15px; }
+        h3 { color: #2c3e50; margin-top: 20px; }
         .stats-table { border-collapse: collapse; width: 100%; margin: 20px 0; }
         .stats-table th, .stats-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
         .stats-table th { background-color: #3498db; color: white; }
         .stats-table tr:nth-child(even) { background-color: #f2f2f2; }
-        .recent-item { margin: 8px 0; padding: 8px; background: #ecf0f1; border-radius: 4px; }
+        .link-item { margin: 8px 0; padding: 8px; background: #ecf0f1; border-radius: 4px; }
+        .link-item a { text-decoration: none; color: #2980b9; }
+        .link-item a:hover { color: #1a5276; text-decoration: underline; }
+        .topic-section { margin: 25px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
         .dday-item { margin: 6px 0; }
-        .issue-item { color: #e74c3c; margin: 4px 0; }
         .footer { margin-top: 40px; color: #7f8c8d; font-size: 0.9em; text-align: center; }
         .code { background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; }
         .section { margin-bottom: 30px; }
+        .insight-box { background: #e8f4f8; padding: 12px; margin: 10px 0; border-left: 3px solid #3498db; }
     </style>
 </head>
 <body>
     <h1>📚 지식도서관 대시보드</h1>
-    <p><em>생성 시각: 2026-04-14 14:31:41</em></p>
+    <p><em>생성 시각: 2026-04-14 15:37</em></p>
 
+    <!-- 통계 -->
     <div class="section">
         <h2>📊 통계</h2>
         <table class="stats-table">
-            <tr><th>주제</th><th>기록 수</th></tr>
-            <tr><td>경제</td><td>2</td></tr>
-            <tr><td>건강</td><td>2</td></tr>
-            <tr><td>마인드</td><td>0</td></tr>
-            <tr><td>독서</td><td>0</td></tr>
-            <tr><td>자녀교육</td><td>0</td></tr>
-            <tr><td>한국역사</td><td>0</td></tr>
-            <tr><td>세계사</td><td>0</td></tr>
+            <tr><th>주제</th><th>기록 수</th><th>최신 통찰</th></tr>
+            <tr><td>경제</td><td>2</td><td><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a><br><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/2026-04-14_나스닥_장기_투자_전략" target="_blank">2026-04-14_나스닥_장기_투자_전략.md</a></td></tr>
+            <tr><td>건강</td><td>2</td><td><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a><br><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></td></tr>
+            <tr><td>마인드</td><td>0</td><td>없음</td></tr>
+            <tr><td>독서</td><td>0</td><td>없음</td></tr>
+            <tr><td>자녀교육</td><td>0</td><td>없음</td></tr>
+            <tr><td>한국역사</td><td>0</td><td>없음</td></tr>
+            <tr><td>세계사</td><td>0</td><td>없음</td></tr>
 
         </table>
     </div>
 
+    <!-- 주제별 최신 통찰 -->
     <div class="section">
-        <h2>📅 최근 업데이트 (7일)</h2>
-        <div class="recent-item"><strong>오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</strong> - 01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md (04-14 14:28)</div>
-        <div class="recent-item"><strong>닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</strong> - 02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md (04-14 14:24)</div>
-        <div class="recent-item"><strong>닥터쓰리_대장속_부패와_산성화를_막아라.md</strong> - 02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md (04-14 14:05)</div>
-        <div class="recent-item"><strong>2026-04-14_나스닥_장기_투자_전략.md</strong> - 01_ECONOMY/2026-04-14_나스닥_장기_투자_전략.md (04-14 10:42)</div>
-        <div class="recent-item"><strong>2026-04-10_미국증시보고.md</strong> - 경제/2026-04-10_미국증시보고.md (04-10 08:56)</div>
-        <div class="recent-item"><strong>2026-04-09_커뮤니티이슈보고.md</strong> - 사회/2026-04-09_커뮤니티이슈보고.md (04-09 11:27)</div>
-        <div class="recent-item"><strong>2026-04-08_국내증시보고.md</strong> - 경제/2026-04-08_국내증시보고.md (04-08 09:24)</div>
-        <div class="recent-item"><strong>2026-04-08_미국증시보고.md</strong> - 경제/2026-04-08_미국증시보고.md (04-08 08:11)</div>
-        <div class="recent-item"><strong>2026-04-08_미국증시보고.md</strong> - 01_DASHBOARD/Reports/2026-04-08_미국증시보고.md (04-08 08:05)</div>
-        <div class="recent-item"><strong>Executive.md</strong> - 01_DASHBOARD/Executive.md (04-08 02:36)</div>
-        <div class="recent-item"><strong>AI_Web_Service.md</strong> - 02_PROJECTS/Projects/AI_Web_Service.md (04-08 02:35)</div>
+        <h2>💡 주제별 최신 통찰</h2>
+    <div class="topic-section">
+        <h3>경제</h3>
+        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</a></div>
+        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/2026-04-14_나스닥_장기_투자_전략" target="_blank">2026-04-14_나스닥_장기_투자_전략.md</a></div>
+    </div>
+    <div class="topic-section">
+        <h3>건강</h3>
+        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</a></div>
+        <div class="link-item">📅 04-14 <a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">닥터쓰리_대장속_부패와_산성화를_막아라.md</a></div>
+    </div>
 
     </div>
 
+    <!-- 최근 업데이트 (7일) -->
     <div class="section">
-        <h2>⏳ D-Days</h2>
-        <div class="dday-area">
+        <h2>📅 최근 업데이트 (7일)</h2>
+        <div class="link-item"><strong>README.md</strong><br>📂 README.md (04-14 15:31)<br><a href="https://violetflag.github.io/knowledge-library/README" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md</strong><br>📂 01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은.md (04-14 14:28)<br><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/오늘의_테슬라_뉴스_월가가_로보택시_직접_체험한_후_내린_결론_352_테슬라_어닝_D_9_예상은" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md</strong><br>📂 02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부.md (04-14 14:24)<br><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_한미일의사의_쉬운_의학_충격_주의_소금의_진실_신장_심장_망가뜨린다_우주맘_10부" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>닥터쓰리_대장속_부패와_산성화를_막아라.md</strong><br>📂 02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라.md (04-14 14:05)<br><a href="https://violetflag.github.io/knowledge-library/02_HEALTH/닥터쓰리_대장속_부패와_산성화를_막아라" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>2026-04-14_나스닥_장기_투자_전략.md</strong><br>📂 01_ECONOMY/2026-04-14_나스닥_장기_투자_전략.md (04-14 10:42)<br><a href="https://violetflag.github.io/knowledge-library/01_ECONOMY/2026-04-14_나스닥_장기_투자_전략" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>2026-04-10_미국증시보고.md</strong><br>📂 경제/2026-04-10_미국증시보고.md (04-10 08:56)<br><a href="https://violetflag.github.io/knowledge-library/경제/2026-04-10_미국증시보고" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>2026-04-09_커뮤니티이슈보고.md</strong><br>📂 사회/2026-04-09_커뮤니티이슈보고.md (04-09 11:27)<br><a href="https://violetflag.github.io/knowledge-library/사회/2026-04-09_커뮤니티이슈보고" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>2026-04-08_국내증시보고.md</strong><br>📂 경제/2026-04-08_국내증시보고.md (04-08 09:24)<br><a href="https://violetflag.github.io/knowledge-library/경제/2026-04-08_국내증시보고" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>2026-04-08_미국증시보고.md</strong><br>📂 경제/2026-04-08_미국증시보고.md (04-08 08:11)<br><a href="https://violetflag.github.io/knowledge-library/경제/2026-04-08_미국증시보고" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>2026-04-08_미국증시보고.md</strong><br>📂 01_DASHBOARD/Reports/2026-04-08_미국증시보고.md (04-08 08:05)<br><a href="https://violetflag.github.io/knowledge-library/01_DASHBOARD/Reports/2026-04-08_미국증시보고" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>Executive.md</strong><br>📂 01_DASHBOARD/Executive.md (04-08 02:36)<br><a href="https://violetflag.github.io/knowledge-library/01_DASHBOARD/Executive" target="_blank">🔗 열기</a></div>
+        <div class="link-item"><strong>AI_Web_Service.md</strong><br>📂 02_PROJECTS/Projects/AI_Web_Service.md (04-08 02:35)<br><a href="https://violetflag.github.io/knowledge-library/02_PROJECTS/Projects/AI_Web_Service" target="_blank">🔗 열기</a></div>
+
+    </div>
+
+    <!-- D-Days -->
+    <div class="section">
+        <h2>⏳ D-Day 카운트다운</h2>
+        <div class="code">
             <div class="dday-item"># D-Day</div>
             <div class="dday-item">200살까지 남은 시간: **59685일**</div>
             <div class="dday-item">- 기준일: 1989-09-12</div>
@@ -78,22 +102,10 @@
         </div>
     </div>
 
-    <div class="section">
-        <h2>🔥 최근 검색 기록</h2>
-        <div class="code">
-# 운영 로그<br><br>시간순으로 모든 인제스트, 쿼리, 린트 기록을 남깁니다.<br><br>## 로그 포맷<br><br>각 항목은 다음과 같은 접두사로 시작:<br><br>- `## [YYYY-MM-DD HH:MM] ingest | 제목` - 새 지식 인제스트<br>- `## [YYYY-MM-DD HH:MM] query | 키워드` - 검색/질의<br>- `## [YYYY-MM-DD HH:MM] lint | 이슈` - 린트 점검<br><br>## 최근 로그<br><br>```dataview<br>LIST creation + " : " + title<br>FROM "00_SYSTEM/log.md"<br>SORT file.mtime DESC<br>LIMIT 10<br>```<br><br>---<br>*이 로그는 자동으로 관리됩니다.*<br>## [2026-04-14 10:42] ingest | 나스닥 장기 투자 전략<br><br>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>📌 업데이트 필요 항목</h2>
-        <div class="issue-item">⚠️ 2026-04-14_나스닥_장기_투자_전략.md (위키 링크: 0개)</div>
-
-    </div>
-
     <div class="footer">
-        <p>이 대시보드는 자동 생성되었습니다.</p>
-        <p>지식도서관 v1.1 | Obsidian 기반 | 7개 주제</p>
+        <p>이 대시보드는 지식도서관(Knowledge Library)에서 자동 생성됩니다.</p>
+        <p>Obsidian 기반 | 7개 주제 | GitHub Pages 호스팅</p>
+        <p><a href="https://github.com/violetflag/knowledge-library" target="_blank">GitHub 저장소</a></p>
     </div>
 </body>
 </html>
